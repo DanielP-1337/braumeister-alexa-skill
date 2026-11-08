@@ -2,7 +2,18 @@
 
 > **Voraussetzung: Home Assistant muss aus dem Internet über HTTPS auf Port 443 mit gültigem Zertifikat erreichbar sein.** Jede Sprachabfrage läuft über Amazon Alexa und AWS Lambda, auch wenn dein Echo im selben WLAN steht. Ein reiner LAN-Betrieb ist mit diesem Skill nicht möglich. Braumeister und Bridge können im Heimnetz bleiben.
 >
-> Für diese Einrichtung brauchst du ein Amazon-Developer-Konto für den Skill und ein AWS-Konto für die Lambda-Funktion. Falls du bisher nur den Alexa-Skill angelegt hast und noch kein AWS-Konto besitzt, beginne mit der [AWS-Registrierung](https://signup.aws.amazon.com/).
+> Für diese Einrichtung brauchst du ein Amazon-Developer-Konto für den Skill und ein AWS-Konto für die Lambda-Funktion.
+
+## Was kostet Mein Brauhelfer?
+
+**Der Skill selbst ist kostenlos.** Für den Betrieb der Lambda-Funktion gelten die Konditionen deines AWS-Kontos.
+
+- **Privat testen:** Im AWS-Tarif *Free account plan* fallen während der Laufzeit keine AWS-Gebühren an. Der Tarif endet nach sechs Monaten oder sobald das Guthaben aufgebraucht ist, je nachdem, was zuerst eintritt. Lässt du den Tarif auslaufen, schließt AWS das Konto und der Skill kann keine Braudaten mehr abrufen. [AWS-Kontotarife](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier-plans.html)
+- **Dauerhaft nutzen:** Für den Weiterbetrieb kannst du vor Ablauf zum *Paid account plan* wechseln. Das monatliche Lambda-Freikontingent umfasst eine Million Aufrufe und 400.000 GB-Sekunden Rechenzeit. Ein paar kurze Brauabfragen pro Tag liegen üblicherweise innerhalb dieser Grenzen. Bei höherer Gesamtnutzung deines AWS-Kontos oder durch andere AWS-Dienste können Kosten entstehen. [AWS-Lambda-Preise](https://aws.amazon.com/lambda/pricing/)
+
+Falls du noch kein AWS-Konto hast, kannst du bei der Registrierung den passenden Tarif wählen. [Zur AWS-Registrierung](https://signup.aws.amazon.com/)
+
+## Was kann ich fragen?
 
 Ein deutschsprachiger Alexa Custom Skill für die [Speidel-Braumeister-Integration](https://github.com/omphteliba/ha-speidel-braumeister). Ein Echo liest über Home Assistant den aktuellen Brauschritt, seine Restzeit und zwei Alarmmeldungen vor. Der Skill enthält ausschließlich Sprachabfragen.
 
