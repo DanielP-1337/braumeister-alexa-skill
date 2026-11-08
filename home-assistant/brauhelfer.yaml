@@ -1,0 +1,52 @@
+# Home Assistant package. Replace the three example entity IDs throughout.
+alexa:
+
+intent_script:
+  BrauStatus:
+    speech:
+      text: >-
+        {% set step = states('sensor.braumeister_schritt') %}
+        {% if step in ['unknown', 'unavailable', 'none', ''] %}
+          Der aktuelle Brauschritt ist gerade unbekannt.
+        {% else %}
+          Der Braumeister meldet: {{ step }}.
+        {% endif %}
+
+  BrauRestzeit:
+    speech:
+      text: >-
+        {% set entity = 'sensor.braumeister_restzeit' %}
+        {% set value = states(entity) | float(none) %}
+        {% set unit = state_attr(entity, 'unit_of_measurement') %}
+        {% if value is not none and value >= 0 and unit in ['min', 's', 'h'] %}
+          {% set minutes = (value * {'min': 1, 's': 1/60, 'h': 60}[unit]) | round(0, 'ceil') | int %}
+          {% if minutes == 0 %}Die Restzeit des aktuellen Schritts steht auf null.
+          {% elif minutes == 1 %}Im aktuellen Schritt bleibt noch eine Minute.
+          {% else %}Im aktuellen Schritt bleiben noch {{ minutes }} Minuten.{% endif %}
+        {% else %}
+          Für den aktuellen Schritt ist gerade keine Restzeit verfügbar.
+        {% endif %}
+
+  BrauHopfen:
+    speech:
+      text: >-
+        {% set entity = 'binary_sensor.braumeister_alarm' %}
+        {% if is_state(entity, 'on') and state_attr(entity, 'alarm_type') == 'hop_addition' %}
+          Jetzt ist die Hopfengabe fällig.
+        {% elif states(entity) in ['on', 'off'] %}
+          Für die nächste Hopfengabe liegt mir kein Countdown vor.
+        {% else %}
+          Der Hopfenalarm ist gerade nicht verfügbar.
+        {% endif %}
+
+  BrauEnde:
+    speech:
+      text: >-
+        {% set entity = 'binary_sensor.braumeister_alarm' %}
+        {% if is_state(entity, 'on') and state_attr(entity, 'alarm_type') == 'brew_finished' %}
+          Der Braumeister meldet: Der Brauvorgang ist abgeschlossen.
+        {% elif states(entity) in ['on', 'off'] %}
+          Eine Endzeit für den gesamten Brauvorgang liegt mir nicht vor.
+        {% else %}
+          Die Meldung zum Brauende ist gerade nicht verfügbar.
+        {% endif %}

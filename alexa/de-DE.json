@@ -1,0 +1,62 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "mein brauhelfer",
+      "intents": [
+        {
+          "name": "BrauStatus",
+          "samples": [
+            "was macht der braumeister",
+            "wie ist der braustatus",
+            "welcher brauschritt läuft"
+          ]
+        },
+        {
+          "name": "BrauRestzeit",
+          "samples": [
+            "wie lange dauert der aktuelle schritt",
+            "wie viel zeit bleibt in diesem schritt",
+            "wie lange noch"
+          ]
+        },
+        {
+          "name": "BrauHopfen",
+          "samples": [
+            "wann ist die nächste hopfengabe",
+            "wie lange noch bis zur nächsten hopfengabe",
+            "ist der hopfen jetzt dran"
+          ]
+        },
+        {
+          "name": "BrauEnde",
+          "samples": [
+            "wann ist das bier fertig",
+            "ist der brauvorgang fertig",
+            "wann ist der sud fertig"
+          ]
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        }
+      ],
+      "types": []
+    }
+  }
+}
