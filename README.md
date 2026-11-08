@@ -53,11 +53,52 @@ homeassistant:
 
 ## 2. Skill und Lambda verbinden
 
+### Skill anlegen und Skill-ID kopieren
+
 1. In der [Alexa Developer Console](https://developer.amazon.com/alexa/console/ask) einen Skill **Mein Brauhelfer** mit **German (DE)**, **Custom**, **Provision your own** und einem leeren Modell anlegen.
-2. Unter **Build → Interaction Model → JSON Editor** den gesamten Inhalt von [de-DE.json](alexa/de-DE.json) einsetzen. **Save Model** und **Build Model** wählen. Die Skill-ID kopieren.
-3. Die [AWS Lambda Console für Europa (Irland), eu-west-1](https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions) öffnen und mit deinem AWS-Zugang anmelden. Die Ansicht **IAM user sign in** ist für eingerichtete IAM-Benutzer und fragt nach AWS-Konto-ID oder Alias und IAM-Benutzername. Hast du bereits ein eigenes AWS-Konto, verwende dessen üblichen Anmeldeweg. Nach der Anmeldung die Region **Europa (Irland)** prüfen und eine Python-3-Lambda-Funktion mit einer einfachen Lambda-Ausführungsrolle erstellen. Den Inhalt von [lambda_function.py](lambda_function.py) in die gleichnamige Datei einsetzen. Handler auf `lambda_function.lambda_handler`, Funktions-Timeout auf **7 Sekunden** setzen und **Deploy** wählen.
-4. Unter **Environment variables** die geprüfte Fernzugriffsadresse als `BASE_URL` eintragen, ohne abschließenden Schrägstrich oder API-Pfad. `SKILL_ID` auf die vollständige `amzn1.ask.skill.…`-ID setzen. Als Trigger **Alexa Skills Kit** hinzufügen und die Prüfung auf dieselbe Skill-ID aktivieren.
-5. Die Lambda-ARN in der Alexa Developer Console unter **Endpoint → AWS Lambda ARN → Default Region** eintragen und speichern.
+2. Unter **Build → Interaction Model → JSON Editor** den gesamten Inhalt von [de-DE.json](alexa/de-DE.json) einsetzen. **Save Model** und **Build Model** wählen.
+3. Unter **Build → Endpoint → AWS Lambda ARN** steht **Your Skill ID**. Mit **Copy to Clipboard** die vollständige ID mit dem Präfix `amzn1.ask.skill.` kopieren. Diese ID wird gleich zweimal in AWS benötigt.
+
+### Python-Lambda-Funktion erstellen
+
+1. Die [AWS Lambda Console für Europa (Irland), eu-west-1](https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions) öffnen und mit deinem AWS-Zugang anmelden. Die Ansicht **IAM user sign in** ist für eingerichtete IAM-Benutzer und fragt nach AWS-Konto-ID oder Alias und IAM-Benutzername. Hast du bereits ein eigenes AWS-Konto, verwende dessen üblichen Anmeldeweg.
+2. Oben rechts **Europe (Ireland)** prüfen. Von der AWS-Startseite aus kannst du auch oben nach **Lambda** suchen und den Dienst öffnen.
+3. Unter **Functions** beziehungsweise **Event Functions** auf **Create function** beziehungsweise **Create Event Function** klicken und **Author from scratch** wählen.
+4. Als **Function name** beispielsweise `mein-brauhelfer`, als **Runtime** **Python 3.13** und als **Architecture** **x86_64** wählen. Python 3.13 war im Einrichtungstest verfügbar; Python 3.14 wurde in dieser Konsole nicht angeboten.
+5. Unter **Permissions** die automatisch erstellte einfache Ausführungsrolle beibehalten. Je nach Ansicht steht dort **Change default execution role → Create a new role with basic Lambda permissions**, oder die Konsole erklärt direkt, dass sie eine Rolle mit Berechtigung zum Schreiben von CloudWatch-Logs erstellt. Dann **Create function** wählen.
+
+### Code und Einstellungen speichern
+
+1. Unter **Code** die Datei **lambda_function.py** öffnen und deren gesamten Inhalt durch [lambda_function.py](lambda_function.py) ersetzen.
+2. **Deploy** anklicken. Solange **Undeployed** angezeigt wird, ist der bearbeitete Code noch nicht bereitgestellt. Die Erfolgsmeldung abwarten.
+3. Unter **Code → Runtime settings** den Handler `lambda_function.lambda_handler` prüfen.
+4. Unter **Configuration → General configuration → Edit** den **Timeout auf 0 min 7 sec** setzen und **Save** wählen.
+5. Unter **Configuration → Environment variables → Edit** mit **Add environment variable** diese beiden Einträge anlegen und **Save** wählen:
+
+| Key | Value |
+| --- | --- |
+| `BASE_URL` | Die zuvor geprüfte öffentliche Home-Assistant-HTTPS-Adresse, ohne abschließenden Schrägstrich und ohne API-Pfad; bei Nabu Casa beispielsweise `https://deine-adresse.ui.nabu.casa` |
+| `SKILL_ID` | Die vollständige, unter **Your Skill ID** kopierte `amzn1.ask.skill.…`-ID |
+
+Ein Home-Assistant-Token wird hier nicht eingetragen. Die Anmeldung erfolgt später über die Kontoverknüpfung.
+
+### Alexa-Trigger hinzufügen
+
+1. In der Funktionsübersicht **Add trigger** anklicken.
+2. Die Liste **Select a source** öffnen. In der im Einrichtungstest angezeigten Konsole heißt der Eintrag zunächst **Alexa**.
+3. Unter **Choose an Alexa product** **Alexa Skills Kit** auswählen.
+4. **Skill ID verification → Enable (recommended)** beibehalten und unter **Skill ID** dieselbe vollständige ID wie bei `SKILL_ID` eintragen.
+5. Mit **Add** bestätigen. Anschließend erscheint der Alexa-Trigger unter **Configuration → Triggers**.
+
+### Lambda-ARN im Skill hinterlegen
+
+Der Trigger erlaubt Alexa den Aufruf der Funktion. Zusätzlich muss der Skill wissen, welche Funktion er aufrufen soll:
+
+1. In der AWS-Funktionsübersicht oben die **Function ARN** kopieren. Für die hier erstellte Funktion hat sie das Format `arn:aws:lambda:eu-west-1:<AWS-Konto-ID>:function:mein-brauhelfer`.
+2. In der Alexa Developer Console **Build → Endpoint → AWS Lambda ARN** öffnen.
+3. Unter **Default Region (Required)** die eigene Lambda-ARN einsetzen. Falls dort noch eine `ReflectorTemplate…`-ARN des Startmodells steht, diese vollständig ersetzen.
+4. Falls unter **Europe and India** bereits eine abweichende ARN eingetragen ist, dort ebenfalls die eigene ARN einsetzen. Bei einem leeren optionalen Feld genügt der Eintrag unter **Default Region**.
+5. Oben rechts **Save** wählen. Die Lambda-ARN ist ein anderer Wert als die Skill-ID.
 
 ## 3. Konto verknüpfen und ausprobieren
 
