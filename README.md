@@ -1,6 +1,8 @@
 # Mein Brauhelfer
 
 > **Voraussetzung: Home Assistant muss aus dem Internet über HTTPS auf Port 443 mit gültigem Zertifikat erreichbar sein.** Jede Sprachabfrage läuft über Amazon Alexa und AWS Lambda, auch wenn dein Echo im selben WLAN steht. Ein reiner LAN-Betrieb ist mit diesem Skill nicht möglich. Braumeister und Bridge können im Heimnetz bleiben.
+>
+> Für diese Einrichtung brauchst du ein Amazon-Developer-Konto für den Skill und ein AWS-Konto für die Lambda-Funktion. Falls du bisher nur den Alexa-Skill angelegt hast und noch kein AWS-Konto besitzt, beginne mit der [AWS-Registrierung](https://signup.aws.amazon.com/).
 
 Ein deutschsprachiger Alexa Custom Skill für die [Speidel-Braumeister-Integration](https://github.com/omphteliba/ha-speidel-braumeister). Ein Echo liest über Home Assistant den aktuellen Brauschritt, seine Restzeit und zwei Alarmmeldungen vor. Der Skill enthält ausschließlich Sprachabfragen.
 
@@ -42,7 +44,7 @@ homeassistant:
 
 1. In der [Alexa Developer Console](https://developer.amazon.com/alexa/console/ask) einen Skill **Mein Brauhelfer** mit **German (DE)**, **Custom**, **Provision your own** und einem leeren Modell anlegen.
 2. Unter **Build → Interaction Model → JSON Editor** den gesamten Inhalt von [de-DE.json](alexa/de-DE.json) einsetzen. **Save Model** und **Build Model** wählen. Die Skill-ID kopieren.
-3. In der [AWS Lambda Console](https://console.aws.amazon.com/lambda/) in **Europa (Irland), eu-west-1** eine Python-3-Lambda-Funktion mit einer einfachen Lambda-Ausführungsrolle erstellen. Den Inhalt von [lambda_function.py](lambda_function.py) in die gleichnamige Datei einsetzen. Handler auf `lambda_function.lambda_handler`, Funktions-Timeout auf **7 Sekunden** setzen und **Deploy** wählen.
+3. Die [AWS Lambda Console für Europa (Irland), eu-west-1](https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions) öffnen und mit deinem AWS-Zugang anmelden. Die Ansicht **IAM user sign in** ist für eingerichtete IAM-Benutzer und fragt nach AWS-Konto-ID oder Alias und IAM-Benutzername. Hast du bereits ein eigenes AWS-Konto, verwende dessen üblichen Anmeldeweg. Nach der Anmeldung die Region **Europa (Irland)** prüfen und eine Python-3-Lambda-Funktion mit einer einfachen Lambda-Ausführungsrolle erstellen. Den Inhalt von [lambda_function.py](lambda_function.py) in die gleichnamige Datei einsetzen. Handler auf `lambda_function.lambda_handler`, Funktions-Timeout auf **7 Sekunden** setzen und **Deploy** wählen.
 4. Unter **Environment variables** die geprüfte Fernzugriffsadresse als `BASE_URL` eintragen, ohne abschließenden Schrägstrich oder API-Pfad. `SKILL_ID` auf die vollständige `amzn1.ask.skill.…`-ID setzen. Als Trigger **Alexa Skills Kit** hinzufügen und die Prüfung auf dieselbe Skill-ID aktivieren.
 5. Die Lambda-ARN in der Alexa Developer Console unter **Endpoint → AWS Lambda ARN → Default Region** eintragen und speichern.
 
